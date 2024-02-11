@@ -1,5 +1,7 @@
 using System.Net;
 
+using Application.Core;
+
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,9 +19,9 @@ public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger)
 
         var problemDetails = new ProblemDetails
         {
-            Title = "Server.InternalError",
-            Status = (int)HttpStatusCode.InternalServerError,
-            Detail = "An error occurred while processing your request."
+            Title = Error.Internal().Code,
+            Detail = Error.Internal().Message,
+            Status = (int)HttpStatusCode.InternalServerError
         };
 
         httpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
