@@ -1,3 +1,5 @@
+using Api.Middleware;
+
 namespace Api;
 
 public static class DependencyInjection
@@ -6,6 +8,9 @@ public static class DependencyInjection
     {
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
+        services.AddProblemDetails();
+        services.AddExceptionHandler<DomainExceptionHandler>();
+        services.AddExceptionHandler<GlobalExceptionHandler>();
 
         return services;
     }
