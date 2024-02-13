@@ -14,9 +14,9 @@ public class Todo : Entity
 
     public string? Description { get; private set; }
 
-    public DateOnly? DueDate { get; private set; }
+    public DateOnly? DueDateUtc { get; private set; }
 
-    public TimeOnly? DueTime { get; private set; } 
+    public TimeOnly? DueTimeUtc { get; private set; } 
 
     public bool IsCompleted { get; private set; }
 
@@ -33,8 +33,8 @@ public class Todo : Entity
         ListId = listId;
         Title = title;
         Description = description;
-        DueDate = dueDate;
-        DueTime = dueTime;
+        DueDateUtc = dueDate;
+        DueTimeUtc = dueTime;
         CreatedAtUtc = DateTime.UtcNow;
     }
 
@@ -72,8 +72,8 @@ public class Todo : Entity
             throw new DomainException("Due date is required when setting a due time.");
         }
 
-        DueDate = dueDate;
-        DueTime = dueTime;
+        DueDateUtc = dueDate;
+        DueTimeUtc = dueTime;
     }
 
     private Todo() { }

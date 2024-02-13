@@ -31,4 +31,10 @@ app.UseSerilogRequestLogging(options =>
     };
 });
 
+if (app.Environment.IsDevelopment())
+{
+    app.MapGet("/", () => Results.Redirect("/swagger"))
+        .ExcludeFromDescription();
+}
+
 app.Run();

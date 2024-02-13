@@ -16,22 +16,12 @@ public abstract class Entity
         _domainEvents.Add(domainEvent);
     }
 
-    public IReadOnlyList<IDomainEvent> GetDomainEvents()
-    {
-        return _domainEvents.AsReadOnly();
-    }
-
     public List<IDomainEvent> PopDomainEvents()
     {
         var domainEvents = _domainEvents.ToList();
         _domainEvents.Clear();
 
         return domainEvents;
-    }
-
-    public void ClearDomainEvents()
-    {
-        _domainEvents.Clear();
     }
 
     protected Entity() { }
