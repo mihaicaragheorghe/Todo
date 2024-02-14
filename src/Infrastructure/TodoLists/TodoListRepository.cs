@@ -20,7 +20,7 @@ public class TodoListRepository(AppDbContext dbContext) : ITodoListRepository
         await dbContext.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task<IEnumerable<TodoList>> GetAllAsync(Guid userId, CancellationToken cancellationToken = default)
+    public async Task<List<TodoList>> GetByUserIdAsync(Guid userId, CancellationToken cancellationToken = default)
     {
         return await dbContext.TodoLists
             .AsNoTracking()

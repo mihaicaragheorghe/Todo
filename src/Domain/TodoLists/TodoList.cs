@@ -6,8 +6,8 @@ namespace Domain.TodoLists;
 public class TodoList : Entity
 {
     public Guid UserId { get; }
-    
-    public string Title { get; private set; } = null!;
+
+    public string Name { get; private set; } = null!;
 
     public bool IsArchived { get; private set; }
 
@@ -17,21 +17,22 @@ public class TodoList : Entity
 
     public IReadOnlyList<Todo> Todos => _todos.AsReadOnly();
 
-    public TodoList(Guid userId, string title, Guid? id = null) 
+    public TodoList(Guid userId, string title, Guid? id = null)
         : base(id ?? Guid.NewGuid())
     {
+        CreatedAtUtc = DateTime.UtcNow;
         UserId = userId;
-        Title = title;
+        Name = title;
     }
 
-    public void UpdateTitle(string title)
+    public void Rename(string title)
     {
         if (string.IsNullOrWhiteSpace(title))
         {
             throw new DomainException("Title cannot be empty.");
         }
 
-        Title = title;
+        Name = title;
     }
 
     public void AddTodo(Todo todo)
@@ -56,7 +57,7 @@ public class TodoList : Entity
 
     public void RemoveTodo(Guid todoId)
     {
-        var todo = _todos.FirstOrDefault(t => t.Id == todoId) 
+        var todo = _todos.Find(t => t.Id == todoId)
             ?? throw new DomainException("Todo not found in the list");
 
         _todos.Remove(todo);

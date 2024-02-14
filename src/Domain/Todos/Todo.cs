@@ -6,7 +6,7 @@ public class Todo : Entity
 {
     public Guid UserId { get; }
 
-    public Guid ListId { get; private set; }
+    public Guid ListId { get; }
 
     public DateTime CreatedAtUtc { get; }
 
@@ -16,7 +16,7 @@ public class Todo : Entity
 
     public DateOnly? DueDateUtc { get; private set; }
 
-    public TimeOnly? DueTimeUtc { get; private set; } 
+    public TimeOnly? DueTimeUtc { get; private set; }
 
     public bool IsCompleted { get; private set; }
 
@@ -60,8 +60,8 @@ public class Todo : Entity
 
     public void UpdateDescription(string? description)
     {
-        Description = string.IsNullOrWhiteSpace(description) 
-            ? null 
+        Description = string.IsNullOrWhiteSpace(description)
+            ? null
             : description;
     }
 

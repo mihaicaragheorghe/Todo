@@ -7,12 +7,12 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Middleware;
 
-public class DomainExceptionHandler(ILogger<DomainException> logger) 
+public class DomainExceptionHandler(ILogger<DomainException> logger)
     : IExceptionHandler
 {
     public async ValueTask<bool> TryHandleAsync(
-        HttpContext httpContext, 
-        Exception exception, 
+        HttpContext httpContext,
+        Exception exception,
         CancellationToken cancellationToken)
     {
         if (exception is not DomainException domainException)
@@ -32,7 +32,7 @@ public class DomainExceptionHandler(ILogger<DomainException> logger)
         httpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
 
         await httpContext.Response.WriteAsJsonAsync(
-            problemDetails, 
+            problemDetails,
             cancellationToken: cancellationToken);
 
         return true;

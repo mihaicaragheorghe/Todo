@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Common;
 
-public class AppDbContext(DbContextOptions options, IPublisher publisher) 
+public class AppDbContext(DbContextOptions options, IPublisher publisher)
     : DbContext(options)
 {
     public DbSet<TodoList> TodoLists { get; set; } = null!;

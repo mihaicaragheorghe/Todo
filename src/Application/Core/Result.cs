@@ -1,10 +1,11 @@
 namespace Application.Core;
 
-public class Result<TValue> : IResult
+public sealed class Result<TValue> : IResult
 {
     public TValue? Value { get; } = default;
     public Error? Error { get; }
     public bool IsSuccessful { get; }
+    public bool IsFailure => !IsSuccessful;
 
     private Result(TValue? value)
     {
@@ -27,7 +28,7 @@ public class Result<TValue> : IResult
     public static implicit operator Result<TValue>(Error error) => Failure(error);
 
     public TNextValue Match<TNextValue>(
-        Func<TValue, TNextValue> onSuccess, 
-        Func<Error, TNextValue> onFailure) => 
+        Func<TValue, TNextValue> onSuccess,
+        Func<Error, TNextValue> onFailure) =>
             IsSuccessful ? onSuccess(Value!) : onFailure((Error)Error!);
 }

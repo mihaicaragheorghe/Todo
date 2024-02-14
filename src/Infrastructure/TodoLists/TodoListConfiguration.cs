@@ -14,7 +14,7 @@ public class TodoListConfiguration : IEntityTypeConfiguration<TodoList>
         builder.Property(tl => tl.Id)
             .ValueGeneratedNever();
 
-        builder.Property(tl => tl.Title)
+        builder.Property(tl => tl.Name)
             .IsRequired()
             .HasMaxLength(50);
 

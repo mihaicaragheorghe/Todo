@@ -19,7 +19,7 @@ public static class DependencyInjection
             options.AddOpenBehavior(typeof(LoggingBehavior<,>));
             options.AddOpenBehavior(typeof(ValidationBehavior<,>));
         });
-        
+
         return services;
     }
 }
