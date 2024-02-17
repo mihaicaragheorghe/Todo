@@ -12,7 +12,7 @@ public class ReorderTodoListsCommandHandler(ITodoListRepository todoListReposito
 {
     public async Task<Result<Unit>> Handle(ReorderTodoListsCommand command, CancellationToken cancellationToken)
     {
-        await todoListRepository.ReorderItems(command.ItemOrders, cancellationToken);
+        await todoListRepository.ReorderItems(command.ItemOrders, command.UserId, cancellationToken);
 
         return Unit.Value;
     }

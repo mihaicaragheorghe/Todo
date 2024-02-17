@@ -14,7 +14,10 @@ public class RenameTodoListCommandHandler(ITodoListRepository todoListRepository
     {
         var todoList = await todoListRepository.GetByIdAsync(command.Id, cancellationToken);
 
-        if (todoList == null) return TodoListErrors.NotFound;
+        if (todoList?.UserId != command.UserId)
+        {
+            return TodoListErrors.NotFound;
+        }
 
         todoList.Rename(command.Name);
 

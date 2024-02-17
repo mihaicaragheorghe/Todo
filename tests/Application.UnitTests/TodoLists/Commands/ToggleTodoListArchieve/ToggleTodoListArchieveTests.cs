@@ -1,5 +1,4 @@
 using Application.Common.Errors;
-using Application.TodoLists.Commands.ArchieveUnarchieve;
 using Application.TodoLists.Commands.ToggleTodoListArchieve;
 
 using Domain.TodoLists;
@@ -24,11 +23,14 @@ public class ToggleTodoListArchieveTests
     }
 
     [Fact]
-    public async Task Handle_GivenValidRequest_ShouldToggleArchieve()
+    public async Task Handle_ShouldArchieve_WhenRequestIsValid()
     {
         // Arrange
         var todoList = TodoListFactory.CreateTodoList();
-        var command = new ToggleTodoListArchieveCommand(todoList.Id, true);
+        var command = new ToggleTodoListArchieveCommand(
+            TodoListId: todoList.Id,
+            UserId: todoList.UserId,
+            IsArchived: true);
         _todoListRepository.GetByIdAsync(todoList.Id, default)
             .Returns(todoList);
 
@@ -41,10 +43,33 @@ public class ToggleTodoListArchieveTests
     }
 
     [Fact]
-    public async Task Handle_GivenInvalidRequest_ShouldReturnNotFound()
+    public async Task Handle_ShouldUnarchieve_WhenRequestIsValid()
     {
         // Arrange
-        var command = new ToggleTodoListArchieveCommand(Guid.NewGuid(), true);
+        var todoList = TodoListFactory.CreateTodoList();
+        var command = new ToggleTodoListArchieveCommand(
+            TodoListId: todoList.Id,
+            UserId: todoList.UserId,
+            IsArchived: false);
+        _todoListRepository.GetByIdAsync(todoList.Id, default)
+            .Returns(todoList);
+
+        // Act
+        var result = await _handler.Handle(command, default);
+
+        // Assert
+        result.IsSuccessful.Should().BeTrue();
+        todoList.IsArchived.Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task Handle_ShouldReturnNotFound_WhenNoTodoList()
+    {
+        // Arrange
+        var command = new ToggleTodoListArchieveCommand(
+            TodoListId: Guid.NewGuid(),
+            UserId: Guid.NewGuid(),
+            IsArchived: true);
         _todoListRepository.GetByIdAsync(command.TodoListId, default)
             .Returns((TodoList?)null);
 
@@ -57,11 +82,14 @@ public class ToggleTodoListArchieveTests
     }
 
     [Fact]
-    public async Task Handle_GivenValidRequest_ShouldUnarchieve()
+    public async Task Handle_ShouldReturnNotFound_WhenUserIdDoesNotMatch()
     {
         // Arrange
         var todoList = TodoListFactory.CreateTodoList();
-        var command = new ToggleTodoListArchieveCommand(todoList.Id, false);
+        var command = new ToggleTodoListArchieveCommand(
+            TodoListId: todoList.Id,
+            UserId: Guid.NewGuid(),
+            IsArchived: true);
         _todoListRepository.GetByIdAsync(todoList.Id, default)
             .Returns(todoList);
 
@@ -69,7 +97,7 @@ public class ToggleTodoListArchieveTests
         var result = await _handler.Handle(command, default);
 
         // Assert
-        result.IsSuccessful.Should().BeTrue();
-        todoList.IsArchived.Should().BeFalse();
+        result.IsFailure.Should().BeTrue();
+        result.Error.Should().Be(TodoListErrors.NotFound);
     }
 }

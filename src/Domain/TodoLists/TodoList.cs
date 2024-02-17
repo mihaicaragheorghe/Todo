@@ -33,6 +33,10 @@ public class TodoList : Entity
         {
             throw new DomainException("Title cannot be empty.");
         }
+        if (title.Length > TodoListConstants.NameMaxLength)
+        {
+            throw new DomainException($"Title cannot be longer than {TodoListConstants.NameMaxLength} characters.");
+        }
 
         Name = title;
     }

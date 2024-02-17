@@ -1,6 +1,5 @@
 using Application.Common.Errors;
 using Application.Core;
-using Application.TodoLists.Commands.ArchieveUnarchieve;
 
 using Domain.TodoLists;
 
@@ -15,7 +14,7 @@ public class ToggleTodoListArchieveCommandHandler(ITodoListRepository todoListRe
     {
         var todoList = await todoListRepository.GetByIdAsync(command.TodoListId, cancellationToken);
 
-        if (todoList is null)
+        if (todoList?.UserId != command.UserId)
         {
             return TodoListErrors.NotFound;
         }

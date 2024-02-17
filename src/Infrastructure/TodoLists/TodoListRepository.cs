@@ -43,11 +43,14 @@ public class TodoListRepository(AppDbContext dbContext) : ITodoListRepository
         return dbContext.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task ReorderItems(List<ItemOrder> itemOrders, CancellationToken cancellationToken = default)
+    public async Task ReorderItems(
+        List<ItemOrder> itemOrders,
+        Guid userId,
+        CancellationToken cancellationToken = default)
     {
         var ids = itemOrders.ConvertAll(io => io.ItemId);
         var lists = await dbContext.TodoLists
-            .Where(list => ids.Contains(list.Id))
+            .Where(list => ids.Contains(list.Id) && list.UserId == userId)
             .ToListAsync(cancellationToken);
 
         foreach (var list in lists)

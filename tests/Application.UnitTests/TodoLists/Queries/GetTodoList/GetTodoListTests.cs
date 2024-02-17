@@ -42,7 +42,7 @@ public class GetTodoListTests
     }
 
     [Fact]
-    public async Task Handle_GivenInvalidId_ShouldReturnNotFound()
+    public async Task Handle_ShouldReturnNotFound_WhenListNotFound()
     {
         // Arrange
         var query = new GetTodoListQuery(TestConstants.Users.Id, Guid.NewGuid());
@@ -59,7 +59,7 @@ public class GetTodoListTests
     }
 
     [Fact]
-    public async Task Handle_GivenInvalidUserId_ShouldReturnNotFound()
+    public async Task Handle_ShouldReturnNotFound_WhenUserIdDoesNotMatch()
     {
         // Arrange
         var todoList = TodoListFactory.CreateTodoList();

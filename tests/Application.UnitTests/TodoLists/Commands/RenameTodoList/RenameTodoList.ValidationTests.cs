@@ -8,18 +8,16 @@ namespace Application.UnitTests.TodoLists.Commands.RenameTodoList;
 
 public class RenameTodoListValidationTests
 {
-    private readonly RenameTodoListCommandValidator _validator;
-
-    public RenameTodoListValidationTests()
-    {
-        _validator = new RenameTodoListCommandValidator();
-    }
+    private readonly RenameTodoListCommandValidator _validator = new();
 
     [Fact]
-    public async Task Validate_WithValidCommand_ShouldReturnTrue()
+    public async Task ValidateAsync_ShouldReturnValid_WhenCommandIsValid()
     {
         // Arrange
-        var command = new RenameTodoListCommand(Guid.NewGuid(), "Changed title");
+        var command = new RenameTodoListCommand(
+            Guid.NewGuid(),
+            Guid.NewGuid(),
+            "Changed title");
 
         // Act
         var result = await _validator.ValidateAsync(command);
@@ -29,10 +27,13 @@ public class RenameTodoListValidationTests
     }
 
     [Fact]
-    public async Task Validate_WithEmptyName_ShouldReturnFalse()
+    public async Task ValidateAsync_ShouldReturnError_WhenNameIsEmpty()
     {
         // Arrange
-        var command = new RenameTodoListCommand(Guid.NewGuid(), string.Empty);
+        var command = new RenameTodoListCommand(
+            Guid.NewGuid(),
+            Guid.NewGuid(),
+            string.Empty);
 
         // Act
         var result = await _validator.ValidateAsync(command);
@@ -43,10 +44,11 @@ public class RenameTodoListValidationTests
     }
 
     [Fact]
-    public async Task Validate_WithTooLongName_ShouldReturnFalse()
+    public async Task ValidateAsync_ShouldReturnError_WhenNameIsTooLong()
     {
         // Arrange
         var command = new RenameTodoListCommand(
+            Guid.NewGuid(),
             Guid.NewGuid(),
             new string('A', TodoListConstants.NameMaxLength + 1));
 
@@ -56,5 +58,22 @@ public class RenameTodoListValidationTests
         // Assert
         result.IsValid.Should().BeFalse();
         result.Errors.Should().ContainSingle(e => e.PropertyName == nameof(TodoList.Name));
+    }
+
+    [Fact]
+    public async Task ValidateAsync_ShouldReturnError_WhenIdIsEmpty()
+    {
+        // Arrange
+        var command = new RenameTodoListCommand(
+            Guid.Empty,
+            Guid.NewGuid(),
+            "Changed title");
+
+        // Act
+        var result = await _validator.ValidateAsync(command);
+
+        // Assert
+        result.IsValid.Should().BeFalse();
+        result.Errors.Should().ContainSingle(e => e.PropertyName == nameof(RenameTodoListCommand.Id));
     }
 }

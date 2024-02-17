@@ -24,11 +24,14 @@ public class RenameTodoListTests
     }
 
     [Fact]
-    public async Task Handle_WithValidRequest_ShouldUpdateTodoListTitle()
+    public async Task Handle_ShouldUpdateTodoListTitle_WhenValidCommand()
     {
         // Arrange
         var todoList = TodoListFactory.CreateTodoList();
-        var command = new RenameTodoListCommand(todoList.Id, "Changed title");
+        var command = new RenameTodoListCommand(
+            Id: todoList.Id,
+            UserId: todoList.UserId,
+            Name: "Changed title");
         _todoListRepository
             .GetByIdAsync(command.Id, default)
             .Returns(todoList);
@@ -42,10 +45,13 @@ public class RenameTodoListTests
     }
 
     [Fact]
-    public async Task Handle_WithInvalidRequest_ShouldReturnNotFound()
+    public async Task Handle_ShouldReturnNotFound_WhenListNotFound()
     {
         // Arrange
-        var command = new RenameTodoListCommand(Guid.NewGuid(), "Changed title");
+        var command = new RenameTodoListCommand(
+            Id: Guid.NewGuid(),
+            UserId: Guid.NewGuid(),
+            Name: "Changed title");
         _todoListRepository
             .GetByIdAsync(command.Id, default)
             .Returns((TodoList?)null);
@@ -59,11 +65,14 @@ public class RenameTodoListTests
     }
 
     [Fact]
-    public async Task Handle_WithEmptyName_ShouldThrowDomainException()
+    public async Task Handle_ShouldThrowDomainException_WhenNameIsEmpty()
     {
         // Arrange
         var todoList = TodoListFactory.CreateTodoList();
-        var command = new RenameTodoListCommand(todoList.Id, string.Empty);
+        var command = new RenameTodoListCommand(
+            Id: todoList.Id,
+            UserId: todoList.UserId,
+            Name: string.Empty);
         _todoListRepository
             .GetByIdAsync(command.Id, default)
             .Returns(todoList);
@@ -73,5 +82,46 @@ public class RenameTodoListTests
 
         // Assert
         await act.Should().ThrowAsync<DomainException>();
+    }
+
+    [Fact]
+    public async Task Handle_ShouldThrowDomainException_WhenNameIsTooLong()
+    {
+        // Arrange
+        var todoList = TodoListFactory.CreateTodoList();
+        var command = new RenameTodoListCommand(
+            Id: todoList.Id,
+            UserId: todoList.UserId,
+            Name: new string('A', TodoListConstants.NameMaxLength + 1));
+        _todoListRepository
+            .GetByIdAsync(command.Id, default)
+            .Returns(todoList);
+
+        // Act
+        Func<Task> act = async () => await _handler.Handle(command, default);
+
+        // Assert
+        await act.Should().ThrowAsync<DomainException>();
+    }
+
+    [Fact]
+    public async Task Handle_ShouldReturnError_WhenUserIdDoesNotMatch()
+    {
+        // Arrange
+        var todoList = TodoListFactory.CreateTodoList();
+        var command = new RenameTodoListCommand(
+            Id: todoList.Id,
+            UserId: Guid.NewGuid(),
+            Name: "Changed title");
+        _todoListRepository
+            .GetByIdAsync(command.Id, default)
+            .Returns(todoList);
+
+        // Act
+        var result = await _handler.Handle(command, default);
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        result.Error.Should().Be(TodoListErrors.NotFound);
     }
 }

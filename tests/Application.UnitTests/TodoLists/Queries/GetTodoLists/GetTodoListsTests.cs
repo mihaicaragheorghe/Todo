@@ -23,7 +23,7 @@ public class GetTodoLists
     }
 
     [Fact]
-    public async Task Handle_WhenValidQuery_ShouldReturnTodoLists()
+    public async Task Handle_ShouldReturnTodoLists_WhenValidQuery()
     {
         // Arrange
         var userId = TestConstants.Users.Id;
@@ -44,7 +44,7 @@ public class GetTodoLists
     }
 
     [Fact]
-    public async Task Handle_WhenNoLists_ShouldReturnEmptyList()
+    public async Task Handle_ShouldReturnEmptyList_WhenNoLists()
     {
         // Arrange
         var query = new GetTodoListsQuery(Guid.NewGuid());

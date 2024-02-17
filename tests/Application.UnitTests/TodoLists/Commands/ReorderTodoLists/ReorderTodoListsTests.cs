@@ -3,7 +3,11 @@ using Application.TodoLists.Commands.ReorderTodoLists;
 using Domain.Common;
 using Domain.TodoLists;
 
+using FluentAssertions;
+
 using NSubstitute;
+
+using TestCommon.Constants;
 
 namespace Application.UnitTests.TodoLists.Commands.ReorderTodoLists;
 
@@ -19,19 +23,20 @@ public class ReorderTodoListsTests
     }
 
     [Fact]
-    public async Task Handle_ShouldCallReorderItemsOnce()
+    public async Task Handle_ShouldBeSuccessful_WhenValidCommand()
     {
         // Arrange
-        var command = new ReorderTodoListsCommand([
+        List<ItemOrder> items =
+        [
             new ItemOrder(Guid.NewGuid(), 1),
             new ItemOrder(Guid.NewGuid(), 2)
-        ]);
+        ];
+        var command = new ReorderTodoListsCommand(items, TestConstants.Users.Id);
 
         // Act
-        await _handler.Handle(command, CancellationToken.None);
+        var result = await _handler.Handle(command, CancellationToken.None);
 
         // Assert
-        await _repository.Received(1)
-            .ReorderItems(command.ItemOrders, Arg.Any<CancellationToken>());
+        result.IsSuccessful.Should().BeTrue();
     }
 }

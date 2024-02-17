@@ -2,7 +2,7 @@ using Application.Core;
 
 using MediatR;
 
-namespace Application.TodoLists.Commands.ArchieveUnarchieve;
+namespace Application.TodoLists.Commands.ToggleTodoListArchieve;
 
-public record ToggleTodoListArchieveCommand(Guid TodoListId, bool IsArchived)
+public record ToggleTodoListArchieveCommand(Guid TodoListId, Guid UserId, bool IsArchived)
     : IRequest<Result<Unit>>;

@@ -7,5 +7,7 @@ public class ReorderTodoListsCommandValidator : AbstractValidator<ReorderTodoLis
     public ReorderTodoListsCommandValidator()
     {
         RuleFor(v => v.ItemOrders).NotEmpty();
+
+        RuleFor(v => v.UserId).NotEmpty();
     }
 }
