@@ -9,6 +9,8 @@ public class TodoList : Entity
 
     public string Name { get; private set; } = null!;
 
+    public int Order { get; private set; }
+
     public bool IsArchived { get; private set; }
 
     public DateTime CreatedAtUtc { get; }
@@ -63,24 +65,19 @@ public class TodoList : Entity
         _todos.Remove(todo);
     }
 
-    public void Archive()
+    public void ToggleArchived(bool isArchived)
     {
-        if (IsArchived)
-        {
-            throw new DomainException("List is already archived.");
-        }
-
-        IsArchived = true;
+        IsArchived = isArchived;
     }
 
-    public void Unarchive()
+    public void SetOrder(int order)
     {
-        if (!IsArchived)
+        if (order < 0)
         {
-            throw new DomainException("List is not archived.");
+            throw new DomainException("Order cannot be negative.");
         }
 
-        IsArchived = false;
+        Order = order;
     }
 
     private TodoList() { }

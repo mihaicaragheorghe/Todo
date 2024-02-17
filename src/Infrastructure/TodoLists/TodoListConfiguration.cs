@@ -16,7 +16,7 @@ public class TodoListConfiguration : IEntityTypeConfiguration<TodoList>
 
         builder.Property(tl => tl.Name)
             .IsRequired()
-            .HasMaxLength(50);
+            .HasMaxLength(TodoListConstants.NameMaxLength);
 
         builder.HasMany(tl => tl.Todos)
             .WithOne()
