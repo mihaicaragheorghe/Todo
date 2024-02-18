@@ -1,7 +1,10 @@
 using Api.Contracts.Common;
 using Api.Contracts.TodoLists;
 
+using Application.Common.Errors;
+using Application.Core;
 using Application.TodoLists.Commands.CreateTodoList;
+using Application.TodoLists.Commands.DeleteTodoList;
 using Application.TodoLists.Commands.RenameTodoList;
 using Application.TodoLists.Commands.ReorderTodoLists;
 using Application.TodoLists.Commands.ToggleTodoListArchieve;
@@ -117,9 +120,21 @@ public class TodoListsController(
             Error);
     }
 
+    [HttpDelete("{id}")]
+    public async Task<ActionResult> Delete(Guid id, CancellationToken cancellationToken)
+    {
+        var currentUser = GetRequiredCurrentUser();
+        var command = new DeleteTodoListCommand(id, currentUser.UserId);
+        var result = await sender.Send(command, cancellationToken);
+
+        return result.Match(
+            _ => NoContent(),
+            Error);
+    }
+
     public CurrentUser GetRequiredCurrentUser() =>
         currentUserProvider.GetCurrentUser()
-            ?? throw new UnauthorizedAccessException();
+            ?? throw new ServiceException(UserErrors.Unauthorized);
 
     private TodoListDto ToDto(TodoList todoList) =>
         new(todoList.Id,

@@ -15,18 +15,6 @@ public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger)
         Exception exception,
         CancellationToken cancellationToken)
     {
-        if (exception is UnauthorizedAccessException)
-        {
-            logger.LogWarning(exception, "An unauthorized access exception occurred.");
-
-            httpContext.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
-            await httpContext.Response.WriteAsJsonAsync(
-                "Unauthorized",
-                cancellationToken: cancellationToken);
-
-            return true;
-        }
-
         logger.LogError(exception, "An unhandled exception occurred.");
 
         var problemDetails = new ProblemDetails

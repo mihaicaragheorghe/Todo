@@ -1,3 +1,5 @@
+using System.Net;
+
 namespace Application.Core;
 
 public readonly record struct Error
@@ -7,6 +9,18 @@ public readonly record struct Error
     public string Message { get; }
 
     public ErrorType Type { get; }
+
+    public HttpStatusCode StatusCode => Type switch
+    {
+        ErrorType.Validation => HttpStatusCode.BadRequest,
+        ErrorType.Unauthorized => HttpStatusCode.Unauthorized,
+        ErrorType.Forbidden => HttpStatusCode.Forbidden,
+        ErrorType.NotFound => HttpStatusCode.NotFound,
+        ErrorType.Conflict => HttpStatusCode.Conflict,
+        ErrorType.Failure => HttpStatusCode.InternalServerError,
+        ErrorType.Internal => HttpStatusCode.InternalServerError,
+        _ => HttpStatusCode.InternalServerError,
+    };
 
     public static Error Validation(
         string code = "Validation",
