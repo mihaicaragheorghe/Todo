@@ -10,14 +10,9 @@ public class CurrentUserProvider(IHttpContextAccessor httpContextAccessor)
     public CurrentUser? GetCurrentUser()
     {
         var userId = GetSingleClaimValue(ClaimTypes.NameIdentifier);
-        var email = GetClaimValue(ClaimTypes.Email);
-        var name = GetClaimValue(ClaimTypes.Name);
+        var email = GetSingleClaimValue(ClaimTypes.Email);
+        var name = GetSingleClaimValue(ClaimTypes.Name);
         var roles = GetClaimValues(ClaimTypes.Role);
-
-        if (userId is null || email is null || name is null)
-        {
-            return null;
-        }
 
         return new CurrentUser(Guid.Parse(userId), email, name, roles);
     }
