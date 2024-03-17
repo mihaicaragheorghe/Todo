@@ -1,5 +1,6 @@
 using Domain.Common;
 using Domain.TodoLists;
+using Domain.Users;
 
 using MediatR;
 
@@ -11,6 +12,8 @@ public class AppDbContext(DbContextOptions options, IPublisher publisher)
     : DbContext(options)
 {
     public DbSet<TodoList> TodoLists { get; set; } = null!;
+
+    public DbSet<User> Users { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

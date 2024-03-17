@@ -1,0 +1,8 @@
+POST {{host}}/users
+Content-Type: application/json
+
+{
+  "name": "John Doe",
+  "email": "johndoe@test.com",
+  "password": "Pa$$w0rd!"
+}

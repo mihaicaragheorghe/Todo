@@ -1,8 +1,12 @@
 using Domain.TodoLists;
+using Domain.Users;
 
 using Infrastructure.Common;
+using Infrastructure.Security.TokenGenerator;
+using Infrastructure.Security.TokenValidation;
 using Infrastructure.TodoLists;
 
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,7 +19,8 @@ public static class DependencyInjection
     {
         services
             .AddHttpContextAccessor()
-            .AddPersistence(configuration);
+            .AddPersistence(configuration)
+            .AddIdentity(configuration);
 
         return services;
     }
@@ -25,7 +30,46 @@ public static class DependencyInjection
         services.AddDbContext<AppDbContext>(options =>
             options.UseSqlite(configuration.GetConnectionString("DefaultConnection")));
 
+        services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<ITodoListRepository, TodoListRepository>();
+
+        return services;
+    }
+
+    public static IServiceCollection AddIdentity(this IServiceCollection services, IConfiguration configuration)
+    {
+        // services.AddIdentityCore<User>(options =>
+        // {
+        //     options.Password.RequireDigit = true;
+        //     options.Password.RequiredLength = 8;
+        //     options.Password.RequireLowercase = true;
+        //     options.Password.RequireUppercase = true;
+        //     options.User.RequireUniqueEmail = true;
+        // })
+        // .AddUserStore<AppDbContext>();
+
+        var accessTokenSection = configuration.GetSection("AccessToken");
+
+        services.AddOptions<AccessTokenOptions>()
+            .Bind(accessTokenSection)
+            .Validate(opts => !string.IsNullOrWhiteSpace(opts.Secret) 
+                && opts.ExpiresInMinutes > 0
+                && !string.IsNullOrWhiteSpace(opts.Issuer)
+                && !string.IsNullOrWhiteSpace(opts.Audience)) 
+            .ValidateOnStart();
+
+        services.AddOptions<RefreshTokenOptions>()
+            .Bind(configuration.GetSection("RefreshToken"))
+            .Validate(opts => !string.IsNullOrWhiteSpace(opts.Secret) && opts.ExpiresInHours > 0) 
+            .ValidateOnStart();
+
+        services.AddSingleton<ITokenGenerator, TokenGenerator>();
+        services.AddSingleton<IRefreshTokenValidator, RefreshTokenValidator>();
+
+        services
+            .ConfigureOptions<AccessTokenValidationConfiguration>()
+            .AddAuthentication(defaultScheme: JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer();
 
         return services;
     }

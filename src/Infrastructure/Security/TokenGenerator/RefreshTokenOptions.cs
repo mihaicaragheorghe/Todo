@@ -1,5 +1,7 @@
 namespace Infrastructure.Security.TokenGenerator;
 
-public record RefreshTokenOptions(
-    string Secret,
-    int ExpiresInHours);
+public class RefreshTokenOptions
+{
+    public string Secret { get; set; } = null!;
+    public int ExpiresInHours { get; set; }
+}

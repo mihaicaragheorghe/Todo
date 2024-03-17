@@ -1,5 +1,9 @@
 using Api;
 
+using Application;
+
+using Infrastructure;
+
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,7 +11,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseSerilog((hostingContext, loggerConfiguration) =>
     loggerConfiguration.ReadFrom.Configuration(hostingContext.Configuration));
 
-builder.Services.AddApi();
+builder.Services
+    .AddApi()
+    .AddApplication()
+    .AddInfrastructure(builder.Configuration);
 
 var app = builder.Build();
 

@@ -4,13 +4,13 @@ namespace Domain.Users;
 
 public class User : Entity
 {
-    public string Email { get; private set; }
+    public string Email { get; private set; } = null!;
 
-    public string Name { get; private set; }
+    public string Name { get; private set; } = null!;
 
-    public string ProfilePictureUrl { get; private set; }
+    public string ProfilePictureUrl { get; private set; } = null!;
 
-    public List<string> Roles { get; }
+    public List<string> Roles { get; } = [];
 
     public User(Guid id, string email, string name, string profilePictureUrl, List<string> roles)
         : base(id)
@@ -21,13 +21,18 @@ public class User : Entity
         Roles = roles;
     }
 
-    public static User Create(string email, string name, string profilePictureUrl, List<string> roles) =>
-        new(Guid.NewGuid(), email, name, profilePictureUrl, roles);
+    public static User Create(string email, string name) =>
+        new(Guid.NewGuid(), email, name, string.Empty, []);
 
     public void Update(string email, string name, string profilePictureUrl)
     {
         Email = email;
         Name = name;
         ProfilePictureUrl = profilePictureUrl;
+    }
+
+    private User()
+    {
+        // Required by EF Core
     }
 }

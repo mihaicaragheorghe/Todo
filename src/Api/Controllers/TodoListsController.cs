@@ -27,7 +27,7 @@ namespace Api.Controllers;
 public class TodoListsController(
     ISender sender,
     ICurrentUserProvider currentUserProvider)
-    : ApiController
+        : ApiController
 {
     [HttpGet]
     public async Task<ActionResult<List<TodoListDto>>> GetTodoLists(CancellationToken cancellationToken)
@@ -132,7 +132,7 @@ public class TodoListsController(
             Error);
     }
 
-    public CurrentUser GetRequiredCurrentUser() =>
+    private CurrentUser GetRequiredCurrentUser() =>
         currentUserProvider.GetCurrentUser()
             ?? throw new ServiceException(UserErrors.Unauthorized);
 
