@@ -6,14 +6,21 @@ public class User : Entity
 {
     public string Email { get; private set; } = null!;
 
+    public string PasswordHash { get; private set; } = null!;
+
     public string Name { get; private set; } = null!;
 
     public string ProfilePictureUrl { get; private set; } = null!;
 
     public List<string> Roles { get; } = [];
 
-    public User(Guid id, string email, string name, string profilePictureUrl, List<string> roles)
-        : base(id)
+    public User(
+        Guid id,
+        string email,
+        string name,
+        string profilePictureUrl,
+        List<string> roles)
+            : base(id)
     {
         Email = email;
         Name = name;
@@ -30,6 +37,9 @@ public class User : Entity
         Name = name;
         ProfilePictureUrl = profilePictureUrl;
     }
+
+    public void SetPasswordHash(string passwordHash) =>
+        PasswordHash = passwordHash;
 
     private User()
     {

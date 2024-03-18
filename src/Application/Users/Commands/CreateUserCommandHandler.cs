@@ -9,12 +9,12 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Application.Users.Commands;
 
-public class CreateUserCommandHandler(IUserRepository userRepository)
+public class CreateUserCommandHandler(IUserRepository userRepository, IPasswordHasher<User> passwordHasher)
     : IRequestHandler<CreateUserCommand, Result<User>>
 {
     public async Task<Result<User>> Handle(CreateUserCommand request, CancellationToken cancellationToken)
     {
-        if (await userRepository.FindByEmailAsync(request.Email) is not null)
+        if (await userRepository.FindByEmailAsync(request.Email, cancellationToken) is not null)
         {
             return UserErrors.EmailInUse;
         }
@@ -23,7 +23,7 @@ public class CreateUserCommandHandler(IUserRepository userRepository)
             email: request.Email,
             name: request.Name);
 
-        // todo add password hashing and user roles
+        user.SetPasswordHash(passwordHasher.HashPassword(user, request.Password));
 
         await userRepository.AddAsync(user, cancellationToken);
 

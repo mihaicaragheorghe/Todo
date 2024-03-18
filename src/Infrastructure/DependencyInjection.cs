@@ -7,6 +7,7 @@ using Infrastructure.Security.TokenValidation;
 using Infrastructure.TodoLists;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -38,16 +39,6 @@ public static class DependencyInjection
 
     public static IServiceCollection AddIdentity(this IServiceCollection services, IConfiguration configuration)
     {
-        // services.AddIdentityCore<User>(options =>
-        // {
-        //     options.Password.RequireDigit = true;
-        //     options.Password.RequiredLength = 8;
-        //     options.Password.RequireLowercase = true;
-        //     options.Password.RequireUppercase = true;
-        //     options.User.RequireUniqueEmail = true;
-        // })
-        // .AddUserStore<AppDbContext>();
-
         var accessTokenSection = configuration.GetSection("AccessToken");
 
         services.AddOptions<AccessTokenOptions>()
@@ -63,6 +54,7 @@ public static class DependencyInjection
             .Validate(opts => !string.IsNullOrWhiteSpace(opts.Secret) && opts.ExpiresInHours > 0) 
             .ValidateOnStart();
 
+        services.AddTransient<IPasswordHasher<User>, PasswordHasher<User>>();
         services.AddSingleton<ITokenGenerator, TokenGenerator>();
         services.AddSingleton<IRefreshTokenValidator, RefreshTokenValidator>();
 

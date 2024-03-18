@@ -20,10 +20,14 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(u => u.ProfilePictureUrl)
             .HasMaxLength(256);
 
-        // builder.HasMany(u => u.Roles)
-        //     .WithOne()
-        //     .HasForeignKey("UserId")
-        //     .IsRequired()
-        //     .OnDelete(DeleteBehavior.Cascade);
+        builder.Property(u => u.PasswordHash)
+            .IsRequired();
+        
+        builder.Property(u => u.Roles)
+            .HasConversion(
+                v => string.Join(',', v),
+                v => v.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList());
+
+        builder.HasIndex(u => u.Email);
     }
 }

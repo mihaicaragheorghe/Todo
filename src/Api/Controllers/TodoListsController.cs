@@ -48,6 +48,11 @@ public class TodoListsController(
         var query = new GetTodoListQuery(id, currentUser.UserId);
         var result = await sender.Send(query, cancellationToken);
 
+        if (result is null)
+        {
+            return NotFound();
+        }
+
         return result.Match(
             list => Ok(ToDto(list)),
             Error);
