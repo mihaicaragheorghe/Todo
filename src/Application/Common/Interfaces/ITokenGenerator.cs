@@ -1,4 +1,6 @@
-namespace Infrastructure.Security.TokenGenerator;
+using System.Security.Claims;
+
+namespace Application.Common.Interfaces;
 
 public interface ITokenGenerator
 {

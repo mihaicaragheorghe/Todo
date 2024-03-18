@@ -19,4 +19,12 @@ public static class UserErrors
     public static Error CreationFailed => Error.Failure(
         code: "User.CreationFailed",
         message: "User creation failed.");
+
+    public static Error InvalidCredentials => Error.Validation(
+        code: "User.InvalidCredentials",
+        message: "Invalid email or password.");
+
+    public static Error RefreshTokenValidationFailed => Error.Validation(
+        code: "User.RefreshTokenValidationFailed",
+        message: "Refresh token validation failed.");
 }

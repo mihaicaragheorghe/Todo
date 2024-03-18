@@ -1,6 +1,3 @@
-
-using System.Net;
-
 using Application.Core;
 
 using Microsoft.AspNetCore.Diagnostics;

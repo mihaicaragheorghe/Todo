@@ -1,7 +1,6 @@
 using Application.TodoLists.Commands.ReorderTodoLists;
 
 using Domain.Common;
-using Domain.TodoLists;
 
 using FluentAssertions;
 
