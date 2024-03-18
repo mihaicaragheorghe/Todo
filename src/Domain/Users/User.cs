@@ -12,6 +12,8 @@ public class User : Entity
 
     public string ProfilePictureUrl { get; private set; } = null!;
 
+    public DateTime CreatedAtUtc { get; private set; } = DateTime.UtcNow;
+
     public List<string> Roles { get; } = [];
 
     public User(
@@ -19,6 +21,7 @@ public class User : Entity
         string email,
         string name,
         string profilePictureUrl,
+        DateTime createdAtUtc,
         List<string> roles)
             : base(id)
     {
@@ -26,10 +29,11 @@ public class User : Entity
         Name = name;
         ProfilePictureUrl = profilePictureUrl;
         Roles = roles;
+        CreatedAtUtc = createdAtUtc;
     }
 
     public static User Create(string email, string name) =>
-        new(Guid.NewGuid(), email, name, string.Empty, []);
+        new(Guid.NewGuid(), email, name, string.Empty, DateTime.UtcNow, []);
 
     public void Update(string email, string name, string profilePictureUrl)
     {
